@@ -164,13 +164,22 @@ function moveCat() {
   const cat = document.getElementById("cat");
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const randX = Math.random() * (vw - 120);
-  const randY = Math.random() * (vh - 120);
+
+  // ✨ 这里是可调范围（例：限制猫猫只在页面右下角活动）
+  const minX = vw * 0.5;
+  const maxX = vw * 0.85;
+  const minY = vh * 0.5;
+  const maxY = vh * 0.85;
+
+  const randX = Math.random() * (maxX - minX) + minX;
+  const randY = Math.random() * (maxY - minY) + minY;
+
   cat.style.left = `${randX}px`;
   cat.style.top  = `${randY}px`;
 }
 moveCat();
-setInterval(moveCat, 1000);
+setInterval(moveCat, 1000);  // 每秒移动一次
+
 
 /* 🎆 烟花动图：每2秒随机生成一个并自动消失 */
 function spawnFirework() {
