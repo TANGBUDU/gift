@@ -3,89 +3,101 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>留言板记录 - 白砂糖の家</title>
-  <link href="https://cdn.jsdelivr.net/npm/sakura-js@1.1.1/dist/sakura.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/sakura-js@1.1.1/dist/sakura.min.js"></script>
-
+  <title>留言板 - 白砂糖の家</title>
   <style>
     body {
       margin: 0;
-      background: url('images/back.png') center/cover fixed no-repeat;
+      background: url("images/back.png") center/cover fixed no-repeat;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
-      padding: 30px;
+      padding: 40px 20px;
       color: #fff;
       text-shadow: 1px 1px 3px #0008;
     }
     h1 {
       font-size: 2.5em;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
+    }
+    .message-container {
+      max-width: 600px;
+      margin: 0 auto;
     }
     .message {
-      background: rgba(255,255,255,0.2);
-      color: #fff;
-      font-size: 1.2em;
-      padding: 12px 20px;
-      border-radius: 12px;
-      margin: 15px auto;
-      max-width: 600px;
+      background: rgba(255, 255, 255, 0.2);
+      margin: 10px auto;
+      padding: 12px;
+      border-radius: 10px;
       position: relative;
-      box-shadow: 0 4px 8px rgba(0,0,0,.4);
-      word-break: break-word;
     }
-    .delete {
+    .delete-btn {
       position: absolute;
-      right: 15px;
-      top: 10px;
-      background: rgba(255, 0, 0, 0.7);
-      color: white;
+      right: 10px;
+      top: 8px;
+      background: transparent;
       border: none;
-      padding: 4px 10px;
-      border-radius: 8px;
+      color: #fff;
       cursor: pointer;
-      font-size: 0.9em;
+      font-size: 16px;
     }
-    a {
-      color: white;
+    a.back {
       display: inline-block;
-      margin-top: 30px;
-      font-size: 1em;
+      margin-top: 20px;
+      color: #fff;
       text-decoration: underline;
+      font-size: 1.2em;
     }
   </style>
 </head>
 <body>
-  <h1>留言板记录</h1>
-  <div id="messageList"></div>
-  <a href="index.html">← 返回主页</a>
+  <h1>留言板 💬</h1>
+  <div class="message-container" id="messageList">加载中...</div>
+  <a class="back" href="index.html">← 返回主页</a>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script>
-    const list = document.getElementById("messageList");
-    let messages = JSON.parse(localStorage.getItem("messages") || "[]");
+    const firebaseConfig = {
+      apiKey: "AIzaSyC5lRX6QhvZokG6Kh4VwnKEmZS9XsnwQhA",
+      authDomain: "sugar-gift.firebaseapp.com",
+      databaseURL: "https://sugar-gift-default-rtdb.firebaseio.com",
+      projectId: "sugar-gift",
+      storageBucket: "sugar-gift.appspot.com",
+      messagingSenderId: "950968381167",
+      appId: "1:950968381167:web:ffbea367dd9ac1a4f9751a"
+    };
 
-    function renderMessages() {
-      list.innerHTML = "";
-      messages.forEach((msg, idx) => {
-        const div = document.createElement("div");
-        div.className = "message";
-        div.innerText = msg;
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const messagesRef = db.ref("messages");
 
-        const delBtn = document.createElement("button");
-        delBtn.className = "delete";
-        delBtn.innerText = "删除";
-        delBtn.onclick = () => {
-          messages.splice(idx, 1);
-          localStorage.setItem("messages", JSON.stringify(messages));
-          renderMessages();
-        };
+    function loadMessages() {
+      messagesRef.off();
+      messagesRef.on("value", (snapshot) => {
+        const container = document.getElementById("messageList");
+        container.innerHTML = "";
+        const data = snapshot.val();
+        if (data) {
+          Object.entries(data).forEach(([key, msg]) => {
+            const div = document.createElement("div");
+            div.className = "message";
+            div.textContent = msg.text;
 
-        div.appendChild(delBtn);
-        list.appendChild(div);
+            const delBtn = document.createElement("button");
+            delBtn.className = "delete-btn";
+            delBtn.innerText = "🗑️";
+            delBtn.onclick = () => messagesRef.child(key).remove();
+
+            div.appendChild(delBtn);
+            container.appendChild(div);
+          });
+        } else {
+          container.innerHTML = "还没有留言呢，快回主页写一句吧！";
+        }
       });
     }
 
-    renderMessages();
-    new Sakura('body', { fallSpeed: 1.2, delay: 300 });
+    loadMessages();
   </script>
 </body>
 </html>
