@@ -93,7 +93,7 @@
     <div class="message-list" id="messageList">（这里会显示你的留言）</div>
   </div>
 
-  <!-- 🐱 橘猫宠物 -->
+  <!-- 🐱 橘猫 -->
   <img src="images/cat2.gif" alt="橘猫" id="cat">
 
 <script>
@@ -153,13 +153,13 @@ function addMessage() {
   }
 }
 
-/* 🌸 Sakura 花瓣飘落 */
+/* 🌸 Sakura 花瓣 */
 new Sakura('body', {
   fallSpeed: 1.2,
   delay: 300
 });
 
-/* 🐱 橘猫每秒移动 50px */
+/* 🐱 橘猫：每秒移动 50px */
 function moveCat() {
   const cat = document.getElementById("cat");
   const vw = window.innerWidth;
@@ -181,26 +181,28 @@ function moveCat() {
 moveCat();
 setInterval(moveCat, 1000);
 
-/* 🎆 烟花动图放大 10 倍（1200px） */
-function spawnFirework() {
+/* 🎆 点击烟花动图（400px） */
+function spawnFireworkAt(x, y) {
   const img = document.createElement("img");
   img.src = "images/fireworks1.gif";
   img.style.position = "fixed";
-  img.style.width = "400px"; // 🔥 放大 10 倍
+  img.style.width = "400px";
   img.style.zIndex = 9998;
   img.style.pointerEvents = "none";
-
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const maxX = Math.max(0, vw - 1200);
-  const maxY = Math.max(0, vh - 1200);
-  img.style.left = Math.random() * maxX + "px";
-  img.style.top = Math.random() * maxY + "px";
-
+  img.style.left = `${x - 200}px`;
+  img.style.top  = `${y - 200}px`;
   document.body.appendChild(img);
   setTimeout(() => img.remove(), 1500);
 }
-setInterval(spawnFirework, 2000);
+
+// 支持 PC 和手机点击
+["click", "touchstart"].forEach(eventType => {
+  document.addEventListener(eventType, e => {
+    const x = e.clientX || (e.touches && e.touches[0].clientX);
+    const y = e.clientY || (e.touches && e.touches[0].clientY);
+    if (x && y) spawnFireworkAt(x, y);
+  });
+});
 </script>
 </body>
 </html>
