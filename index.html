@@ -48,14 +48,15 @@
     .petal {
       position: fixed;
       top: -50px;
-      z-index: 9999;
+      left: 0;
+      z-index: 10000;
       pointer-events: none;
-      width: 20px;
-      height: 20px;
+      width: 25px;
+      height: 25px;
       background-image: url('https://cdn.jsdelivr.net/gh/tangbudu/sakura@main/sakura.png');
       background-size: cover;
       animation: fall 8s linear infinite;
-      opacity: 0.8;
+      opacity: 0.9;
     }
     @keyframes fall {
       0% { transform: translateY(0) rotate(0deg); opacity: 1; }
@@ -113,19 +114,19 @@
   </div>
 
   <script>
-    // ❤️ 情话 + 天数
+    // ❤️ 情话 + 在一起天数（起始日改为 2025-04-20）
     const quotes = [
       "你是我一生中最美的遇见。",
       "和你在一起的每一天都值得庆祝。",
       "你的笑容是我每天的动力。",
       "有你，星星都不敢太耀眼。",
-      "世界再大，我的眼里只有你。",
       "不管几岁，见到你我都像个孩子。",
-      "你出现之后，我的世界变得浪漫又柔软。",
-      "希望每天醒来都能看到你。"
+      "希望每天醒来都能看到你。",
+      "你的名字，是我见过最短的情诗。",
+      "我想把全世界最温柔的话都说给你听。"
     ];
 
-    const startDate = new Date("2023-01-01");
+    const startDate = new Date("2025-04-20");
     const today = new Date();
     const daysTogether = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
     document.getElementById('daysTogether').innerText = `我们在一起已经 ${daysTogether} 天啦！`;
@@ -141,7 +142,7 @@
 
     newQuote();
 
-    // 📷 图片轮播
+    // 📷 图片轮播（图片请确保存在 images/1.jpg ~ images/9.jpg）
     const images = [
       "images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg",
       "images/6.jpg", "images/7.jpg", "images/8.jpg", "images/9.jpg"
@@ -152,7 +153,7 @@
       document.getElementById("carouselImage").src = images[index];
     }, 3000);
 
-    // 🌸 樱花飘落
+    // 🌸 樱花飘落特效
     function createPetal() {
       const petal = document.createElement('div');
       petal.classList.add('petal');
@@ -163,7 +164,7 @@
     }
     setInterval(createPetal, 300);
 
-    // 🎵 自动播放优化
+    // 🎵 自动播放优化（移动端首次点击后播放）
     window.addEventListener('load', () => {
       const audio = document.getElementById("bgm");
       const tryPlay = () => {
@@ -173,7 +174,7 @@
       document.body.addEventListener('click', tryPlay);
     });
 
-    // 💬 留言墙逻辑
+    // 💬 留言墙功能
     function addMessage() {
       const input = document.getElementById("messageInput");
       const msg = input.value.trim();
