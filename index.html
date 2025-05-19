@@ -6,6 +6,7 @@
   <title>给我最爱的你 ❤️</title>
   <style>
     body {
+      margin: 0;
       background-image: url("images/back.png");
       background-size: cover;
       background-position: center;
@@ -16,6 +17,7 @@
       padding: 30px;
       color: #fff;
       text-shadow: 1px 1px 3px #00000088;
+      overflow-x: hidden;
     }
     h1 {
       font-size: 2.5em;
@@ -49,6 +51,22 @@
     audio {
       margin-top: 20px;
     }
+    .petal {
+      position: fixed;
+      top: -50px;
+      z-index: 9999;
+      pointer-events: none;
+      user-select: none;
+      width: 25px;
+      height: 25px;
+      background-image: url('https://cdn.jsdelivr.net/gh/hustcc/JS-Snowflake@master/assets/flower.png');
+      background-size: cover;
+      animation: fall 10s linear infinite;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -57,14 +75,13 @@
   <div class="days" id="daysTogether"></div>
   <div class="quote" id="quote"></div>
   <button onclick="newQuote()">换一句情话</button>
+  <button onclick="showBlessing()">点我领取祝福 💌</button>
 
-  <!-- 🎵 背景音乐播放器（可自动播放） -->
-  <div>
-    <audio id="bgm" controls autoplay loop>
-      <source src="music.mp3" type="audio/mpeg">
-      你的浏览器不支持音频播放。
-    </audio>
-  </div>
+  <!-- 🎵 自动播放音乐 -->
+  <audio id="bgm" autoplay loop>
+    <source src="music.mp3" type="audio/mpeg">
+    你的浏览器不支持音频播放。
+  </audio>
 
   <!-- 📷 图片轮播 -->
   <div class="carousel">
@@ -72,6 +89,7 @@
   </div>
 
   <script>
+    // ❤️ 情话 + 天数
     const quotes = [
       "你是我一生中最美的遇见。",
       "和你在一起的每一天都值得庆祝。",
@@ -83,7 +101,7 @@
       "你出现之后，我的世界变得浪漫又柔软。"
     ];
 
-    const startDate = new Date("2023-01-01"); // 你们的纪念日
+    const startDate = new Date("2023-01-01"); // 改成你们的纪念日
     const today = new Date();
     const daysTogether = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
     document.getElementById('daysTogether').innerText = `我们在一起已经 ${daysTogether} 天啦！`;
@@ -93,9 +111,13 @@
       document.getElementById('quote').innerText = quotes[randomIndex];
     }
 
+    function showBlessing() {
+      alert("愿你每天都被温柔相待，被我放在心里💖");
+    }
+
     newQuote();
 
-    // 📷 图片轮播
+    // 📷 轮播
     const images = [
       "images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg",
       "images/6.jpg", "images/7.jpg", "images/8.jpg", "images/9.jpg"
@@ -105,6 +127,29 @@
       index = (index + 1) % images.length;
       document.getElementById("carouselImage").src = images[index];
     }, 3000);
+
+    // 🌸 樱花飘落
+    function createPetal() {
+      const petal = document.createElement('div');
+      petal.classList.add('petal');
+      petal.style.left = Math.random() * 100 + 'vw';
+      petal.style.animationDuration = (6 + Math.random() * 5) + 's';
+      document.body.appendChild(petal);
+      setTimeout(() => {
+        petal.remove();
+      }, 10000);
+    }
+    setInterval(createPetal, 300);
+
+    // 🎵 自动播放兼容桌面浏览器
+    window.addEventListener('load', () => {
+      const audio = document.getElementById("bgm");
+      const play = () => {
+        audio.play().catch(() => {});
+        document.body.removeEventListener('click', play);
+      };
+      document.body.addEventListener('click', play); // 移动端点击触发播放
+    });
   </script>
 
 </body>
