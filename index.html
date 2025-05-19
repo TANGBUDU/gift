@@ -57,8 +57,6 @@
       width: 60%;
       font-size: 1em;
     }
-
-    /* 🐱 橘猫样式 */
     #cat {
       position: fixed;
       width: 120px;
@@ -99,15 +97,18 @@
   <img src="images/cat2.gif" alt="橘猫" id="cat">
 
 <script>
-/* ❤️ 天数 & 情话 */
+/* ❤️ 情话 + 天数 */
 const startDate = new Date("2025-04-20");
 const today = new Date();
 const days = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
 document.getElementById("daysTogether").innerText = `我们在一起已经 ${days} 天啦！`;
 
 const quotes = [
-  "你是我一生中最美的遇见。", "和你在一起的每一天都值得庆祝。", "你的笑容是我每天的动力。",
-  "希望每天醒来都能看到你。", "你出现之后，我的世界变得浪漫又柔软。"
+  "你是我一生中最美的遇见。",
+  "和你在一起的每一天都值得庆祝。",
+  "你的笑容是我每天的动力。",
+  "希望每天醒来都能看到你。",
+  "你出现之后，我的世界变得浪漫又柔软。"
 ];
 function newQuote() {
   const idx = Math.floor(Math.random() * quotes.length);
@@ -152,30 +153,25 @@ function addMessage() {
   }
 }
 
-/* 🌸 Sakura 花瓣飘落 */
+/* 🌸 花瓣飘落 */
 new Sakura('body', {
   fallSpeed: 1.2,
   delay: 300
 });
 
-<script>
+/* 🐱 橘猫：每秒固定移动 50px */
 function moveCat() {
   const cat = document.getElementById("cat");
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
-  // 当前坐标（第一次默认为随机位置）
   const currentX = parseFloat(cat.style.left) || Math.random() * (vw - 120);
   const currentY = parseFloat(cat.style.top)  || Math.random() * (vh - 120);
 
-  // 每次移动的固定距离（可调）
   const step = 50;
-
-  // 方向：+step 或 -step
   const deltaX = (Math.random() > 0.5 ? 1 : -1) * step;
   const deltaY = (Math.random() > 0.5 ? 1 : -1) * step;
 
-  // 新坐标，限制不出屏幕
   const newX = Math.min(Math.max(0, currentX + deltaX), vw - 120);
   const newY = Math.min(Math.max(0, currentY + deltaY), vh - 120);
 
@@ -184,11 +180,8 @@ function moveCat() {
 }
 moveCat();
 setInterval(moveCat, 1000);
-</script>
 
-
-
-/* 🎆 烟花动图：每2秒随机生成一个并自动消失 */
+/* 🎆 烟花动图 */
 function spawnFirework() {
   const img = document.createElement("img");
   img.src = "images/fireworks1.gif";
