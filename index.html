@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>给我最爱的你 ❤️</title>
+  <title>给你的小礼物 ❤️</title>
 
   <!-- 🌸 Sakura 花瓣飘落 -->
   <link  href="https://cdn.jsdelivr.net/npm/sakura-js@1.1.1/dist/sakura.min.css" rel="stylesheet">
@@ -107,7 +107,6 @@ document.getElementById("daysTogether").innerText = `我们在一起已经 ${day
 
 const quotes = [
   "你是我一生中最美的遇见。", "和你在一起的每一天都值得庆祝。", "你的笑容是我每天的动力。",
-  "有你，星星都不敢太耀眼。", "不管几岁，见到你我都像个孩子。", "你的名字，是我见过最短的情诗。",
   "希望每天醒来都能看到你。", "你出现之后，我的世界变得浪漫又柔软。"
 ];
 function newQuote() {
@@ -170,7 +169,7 @@ function moveCat() {
   const currentY = parseFloat(cat.style.top)  || Math.random() * (vh - 120);
 
   // 每次移动的固定距离（可调）
-  const step = 100;
+  const step = 50;
 
   // 方向：+step 或 -step
   const deltaX = (Math.random() > 0.5 ? 1 : -1) * step;
