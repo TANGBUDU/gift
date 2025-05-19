@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>每日一卦 · 白砂糖の家</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: url("images/back.png") center/cover fixed no-repeat;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      text-align: center;
+      padding: 20px;
+      color: #fff;
+      text-shadow: 1px 1px 3px #0008;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+    select, button {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin: 5px;
+      font-size: 1em;
+    }
+    .result {
+      margin-top: 30px;
+      background: rgba(255,255,255,0.2);
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 600px;
+      margin-inline: auto;
+    }
+    .fortune {
+      font-size: 1.2em;
+      margin-bottom: 8px;
+    }
+    .back-btn {
+      margin-top: 30px;
+      background: #fff0f5;
+      color: #cc6699;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 1em;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>今日卦象 · 来一卦 🔮</h1>
+  <div>
+    <select id="mood">
+      <option value="开心">心情：开心</option>
+      <option value="平静">心情：平静</option>
+      <option value="焦虑">心情：焦虑</option>
+      <option value="疲惫">心情：疲惫</option>
+    </select>
+    <select id="sleep">
+      <option value="充足">睡眠：充足</option>
+      <option value="一般">睡眠：一般</option>
+      <option value="不足">睡眠：不足</option>
+    </select>
+    <select id="health">
+      <option value="健康">身体：健康</option>
+      <option value="感冒">身体：感冒</option>
+      <option value="疲倦">身体：疲倦</option>
+    </select>
+    <select id="weather">
+      <option value="晴">天气：晴</option>
+      <option value="阴">天气：阴</option>
+      <option value="雨">天气：雨</option>
+      <option value="风">天气：风</option>
+    </select>
+    <select id="name">
+      <option value="小砂">我是小砂</option>
+      <option value="小白">我是小白</option>
+    </select>
+    <br>
+    <button onclick="draw()">抽签 ✨</button>
+  </div>
+
+  <div class="result" id="result" style="display:none">
+    <div class="fortune" id="fortune"></div>
+    <div id="sign" style="white-space: pre-line;"></div>
+    <div id="explanation" style="margin-top: 10px; font-style: italic;"></div>
+  </div>
+
+  <button class="back-btn" onclick="location.href='index.html'">返回主页</button>
+
+  <script>
+    function hashString(str) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = (hash << 5) - hash + str.charCodeAt(i);
+        hash |= 0;
+      }
+      return Math.abs(hash);
+    }
+
+    async function draw() {
+      const mood = document.getElementById("mood").value;
+      const sleep = document.getElementById("sleep").value;
+      const health = document.getElementById("health").value;
+      const weather = document.getElementById("weather").value;
+      const name = document.getElementById("name").value;
+
+      const date = new Date().toLocaleDateString();
+      const input = `${date}-${mood}-${sleep}-${health}-${weather}-${name}`;
+      const idx = hashString(input) % 50;
+
+      const res = await fetch("gift/fifty_unique_signs_with_fortune.json");
+      const data = await res.json();
+      const sign = data[idx];
+
+      document.getElementById("fortune").innerText = `🌟 吉凶：${sign.fortune}`;
+      document.getElementById("sign").innerText = `📜 ${sign.sign}`;
+      document.getElementById("explanation").innerText = `解签：${sign.explanation}`;
+      document.getElementById("result").style.display = "block";
+    }
+  </script>
+</body>
+</html>
