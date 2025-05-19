@@ -45,23 +45,6 @@
       border-radius: 20px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.4);
     }
-    .petal {
-      position: fixed;
-      top: -50px;
-      left: 0;
-      z-index: 10000;
-      pointer-events: none;
-      width: 25px;
-      height: 25px;
-      background-image: url('https://cdn.jsdelivr.net/gh/tangbudu/sakura@main/sakura.png');
-      background-size: cover;
-      animation: fall 8s linear infinite;
-      opacity: 0.9;
-    }
-    @keyframes fall {
-      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-    }
     .message-wall {
       margin-top: 30px;
     }
@@ -83,6 +66,9 @@
       font-size: 1em;
     }
   </style>
+
+  <!-- 🌸 动态樱花飘落特效（无需上传图片） -->
+  <script src="https://fastly.jsdelivr.net/gh/tangbudu/sakura-canvas@main/sakura.js"></script>
 </head>
 <body>
 
@@ -114,16 +100,16 @@
   </div>
 
   <script>
-    // ❤️ 情话 + 在一起天数（起始日改为 2025-04-20）
+    // ❤️ 情话 + 天数（从 2025年4月20日开始）
     const quotes = [
       "你是我一生中最美的遇见。",
       "和你在一起的每一天都值得庆祝。",
       "你的笑容是我每天的动力。",
       "有你，星星都不敢太耀眼。",
       "不管几岁，见到你我都像个孩子。",
-      "希望每天醒来都能看到你。",
       "你的名字，是我见过最短的情诗。",
-      "我想把全世界最温柔的话都说给你听。"
+      "希望每天醒来都能看到你。",
+      "你出现之后，我的世界变得浪漫又柔软。"
     ];
 
     const startDate = new Date("2025-04-20");
@@ -137,12 +123,12 @@
     }
 
     function showBlessing() {
-      alert("愿你天天开心，被我一直宠爱💝");
+      alert("愿你每天都开心，被我一直宠爱💝");
     }
 
     newQuote();
 
-    // 📷 图片轮播（图片请确保存在 images/1.jpg ~ images/9.jpg）
+    // 📷 轮播图
     const images = [
       "images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg",
       "images/6.jpg", "images/7.jpg", "images/8.jpg", "images/9.jpg"
@@ -153,18 +139,7 @@
       document.getElementById("carouselImage").src = images[index];
     }, 3000);
 
-    // 🌸 樱花飘落特效
-    function createPetal() {
-      const petal = document.createElement('div');
-      petal.classList.add('petal');
-      petal.style.left = Math.random() * 100 + 'vw';
-      petal.style.animationDuration = (6 + Math.random() * 5) + 's';
-      document.body.appendChild(petal);
-      setTimeout(() => petal.remove(), 10000);
-    }
-    setInterval(createPetal, 300);
-
-    // 🎵 自动播放优化（移动端首次点击后播放）
+    // 🎵 自动播放优化（兼容移动端点击触发）
     window.addEventListener('load', () => {
       const audio = document.getElementById("bgm");
       const tryPlay = () => {
@@ -174,7 +149,7 @@
       document.body.addEventListener('click', tryPlay);
     });
 
-    // 💬 留言墙功能
+    // 💬 留言墙逻辑
     function addMessage() {
       const input = document.getElementById("messageInput");
       const msg = input.value.trim();
