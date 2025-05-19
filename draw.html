@@ -83,8 +83,8 @@
 
   <div class="result" id="result" style="display:none">
     <div class="fortune" id="fortune"></div>
-    <div id="sign" style="white-space: pre-line;"></div>
-    <div id="explanation" style="margin-top: 10px; font-style: italic;"></div>
+    <div id="sign" style="white-space: pre-line; margin-top: 10px;"></div>
+    <div id="explanation" style="margin-top: 12px; font-style: italic;"></div>
   </div>
 
   <button class="back-btn" onclick="location.href='index.html'">返回主页</button>
@@ -99,25 +99,33 @@
       return Math.abs(hash);
     }
 
-    async function draw() {
+    function draw() {
       const mood = document.getElementById("mood").value;
       const sleep = document.getElementById("sleep").value;
       const health = document.getElementById("health").value;
       const weather = document.getElementById("weather").value;
       const name = document.getElementById("name").value;
-
       const date = new Date().toLocaleDateString();
+
       const input = `${date}-${mood}-${sleep}-${health}-${weather}-${name}`;
       const idx = hashString(input) % 50;
 
-      const res = await fetch("gift/fifty_unique_signs_with_fortune.json");
-      const data = await res.json();
-      const sign = data[idx];
-
-      document.getElementById("fortune").innerText = `🌟 吉凶：${sign.fortune}`;
-      document.getElementById("sign").innerText = `📜 ${sign.sign}`;
-      document.getElementById("explanation").innerText = `解签：${sign.explanation}`;
-      document.getElementById("result").style.display = "block";
+      fetch("gift/fifty_unique_signs_with_fortune.json")
+        .then(response => {
+          if (!response.ok) throw new Error("文件加载失败！");
+          return response.json();
+        })
+        .then(data => {
+          const sign = data[idx];
+          document.getElementById("fortune").innerText = `🌟 吉凶：${sign.fortune}`;
+          document.getElementById("sign").innerText = `📜 ${sign.sign}`;
+          document.getElementById("explanation").innerText = `解签：${sign.explanation}`;
+          document.getElementById("result").style.display = "block";
+        })
+        .catch(error => {
+          alert("签文加载失败，请检查文件路径或浏览器权限。");
+          console.error(error);
+        });
     }
   </script>
 </body>
