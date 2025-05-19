@@ -6,11 +6,16 @@
   <title>给我最爱的你 ❤️</title>
   <style>
     body {
-      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+      background-image: url("images/back.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
       padding: 30px;
       color: #fff;
+      text-shadow: 1px 1px 3px #00000088;
     }
     h1 {
       font-size: 2.5em;
@@ -29,6 +34,7 @@
       font-size: 1em;
       cursor: pointer;
       margin: 5px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     }
     .carousel {
       margin-top: 30px;
@@ -38,11 +44,10 @@
       max-height: 300px;
       object-fit: contain;
       border-radius: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
     }
-    iframe {
+    audio {
       margin-top: 20px;
-      display: none;
     }
   </style>
 </head>
@@ -53,19 +58,15 @@
   <div class="quote" id="quote"></div>
   <button onclick="newQuote()">换一句情话</button>
 
-  <!-- 🎵 点击播放音乐按钮 -->
+  <!-- 🎵 背景音乐播放器（可自动播放） -->
   <div>
-    <button onclick="startMusic()">点击播放音乐 🎵</button>
-    <br>
-    <iframe id="ytmusic" width="300" height="170"
-      src="https://www.youtube.com/embed/sWff60PZytQ?playlist=sWff60PZytQ"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      allowfullscreen>
-    </iframe>
+    <audio id="bgm" controls autoplay loop>
+      <source src="music.mp3" type="audio/mpeg">
+      你的浏览器不支持音频播放。
+    </audio>
   </div>
 
-  <!-- 📷 照片轮播 -->
+  <!-- 📷 图片轮播 -->
   <div class="carousel">
     <img id="carouselImage" src="images/1.jpg" alt="photo" />
   </div>
@@ -77,10 +78,12 @@
       "你的笑容是我每天的动力。",
       "有你，星星都不敢太耀眼。",
       "世界再大，我的眼里只有你。",
-      "我喜欢你，从眼睛到心里。"
+      "我喜欢你，从眼睛到心里。",
+      "不管几岁，见到你我都像个孩子。",
+      "你出现之后，我的世界变得浪漫又柔软。"
     ];
 
-    const startDate = new Date("2023-01-01");
+    const startDate = new Date("2023-01-01"); // 你们的纪念日
     const today = new Date();
     const daysTogether = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
     document.getElementById('daysTogether').innerText = `我们在一起已经 ${daysTogether} 天啦！`;
@@ -92,20 +95,16 @@
 
     newQuote();
 
-    // 📷 轮播功能
-    const images = ["images/1.jpg", "images/2.jpg", "images/3.jpg"];
+    // 📷 图片轮播
+    const images = [
+      "images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg",
+      "images/6.jpg", "images/7.jpg", "images/8.jpg", "images/9.jpg"
+    ];
     let index = 0;
     setInterval(() => {
       index = (index + 1) % images.length;
       document.getElementById("carouselImage").src = images[index];
     }, 3000);
-
-    // 🎵 启动 YouTube 音乐播放
-    function startMusic() {
-      const iframe = document.getElementById("ytmusic");
-      iframe.src += "&autoplay=1";
-      iframe.style.display = "block";
-    }
   </script>
 
 </body>
