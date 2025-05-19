@@ -1,11 +1,11 @@
+# 修复版 index.html，保持主界面原有美观样式、修正静音按钮逻辑、不显示留言内容
+index_html_fixed = """
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>白砂糖の家</title>
-
-  <!-- Sakura.js 花瓣特效 -->
   <link href="https://cdn.jsdelivr.net/npm/sakura-js@1.1.1/dist/sakura.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sakura-js@1.1.1/dist/sakura.min.js"></script>
 
@@ -13,17 +13,18 @@
     body {
       margin: 0;
       background: url("images/back.png") center/cover fixed no-repeat;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
       padding: 30px;
       color: #fff;
       text-shadow: 1px 1px 3px #0008;
+      overflow-x: hidden;
     }
     #muteBtn {
       position: fixed;
       top: 10px;
       left: 10px;
-      background: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.6);
       border: none;
       padding: 6px 12px;
       font-size: 16px;
@@ -31,21 +32,43 @@
       z-index: 10000;
       cursor: pointer;
     }
+    h1 { font-size: 2.5em; margin-bottom: 20px; }
+    .days, .quote { font-size: 1.5em; margin: 20px 0; }
+    button {
+      background: #fff;
+      color: #ee9ca7;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 1em;
+      cursor: pointer;
+      margin: 5px;
+      box-shadow: 0 4px 6px rgba(0,0,0,.2);
+    }
     .carousel img {
       width: 80%;
       max-height: 300px;
       object-fit: contain;
       border-radius: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,.4);
     }
     .message-wall h2 {
+      margin-top: 40px;
       cursor: pointer;
       text-decoration: underline;
+    }
+    #cat {
+      position: fixed;
+      width: 120px;
+      z-index: 9999;
+      pointer-events: none;
+      transition: all 0.8s ease-in-out;
     }
   </style>
 </head>
 <body>
 
-  <button id="muteBtn">🔇</button>
+  <button id="muteBtn">🔈</button>
 
   <h1>亲爱的，给你的小惊喜 ❤️</h1>
   <div class="days" id="daysTogether"></div>
@@ -63,12 +86,9 @@
 
   <div class="message-wall">
     <h2 onclick="location.href='messages.html'">留言墙 💬</h2>
-    <input type="text" id="messageInput" placeholder="写一句想对我说的话吧…">
-    <button onclick="addMessage()">发送</button>
-    <div class="message-list" id="messageList"></div>
   </div>
 
-  <img src="images/cat2.gif" id="cat" style="position:fixed;width:120px;z-index:9999;pointer-events:none;transition:all 0.8s ease-in-out;">
+  <img src="images/cat2.gif" id="cat">
 
 <script>
 const startDate = new Date("2025-04-20");
@@ -96,39 +116,16 @@ setInterval(() => {
   document.getElementById("carouselImage").src = imgs[i];
 }, 3000);
 
-document.getElementById("muteBtn").onclick = () => {
-  const bgm = document.getElementById("bgm");
-  if (bgm.paused) {
-    bgm.play();
-    muteBtn.innerText = "🔇";
-  } else {
-    bgm.pause();
+const muteBtn = document.getElementById("muteBtn");
+const audio = document.getElementById("bgm");
+muteBtn.onclick = () => {
+  if (audio.paused) {
+    audio.play();
     muteBtn.innerText = "🔈";
+  } else {
+    audio.pause();
+    muteBtn.innerText = "🔇";
   }
-};
-
-function addMessage() {
-  const input = document.getElementById("messageInput");
-  const msg = input.value.trim();
-  if (!msg) return;
-  const list = document.getElementById("messageList");
-  const div = document.createElement("div");
-  div.innerText = msg;
-  list.appendChild(div);
-  let messages = JSON.parse(localStorage.getItem("messages") || "[]");
-  messages.push(msg);
-  localStorage.setItem("messages", JSON.stringify(messages));
-  input.value = "";
-}
-
-window.onload = () => {
-  let messages = JSON.parse(localStorage.getItem("messages") || "[]");
-  messages.forEach(msg => {
-    const div = document.createElement("div");
-    div.innerText = msg;
-    document.getElementById("messageList").appendChild(div);
-  });
-  moveCat();
 };
 
 function moveCat() {
@@ -136,18 +133,18 @@ function moveCat() {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const currentX = parseFloat(cat.style.left) || Math.random() * (vw - 120);
-  const currentY = parseFloat(cat.style.top) || Math.random() * (vh - 120);
+  const currentY = parseFloat(cat.style.top)  || Math.random() * (vh - 120);
   const step = 50;
   const deltaX = (Math.random() > 0.5 ? 1 : -1) * step;
   const deltaY = (Math.random() > 0.5 ? 1 : -1) * step;
   const newX = Math.min(Math.max(0, currentX + deltaX), vw - 120);
   const newY = Math.min(Math.max(0, currentY + deltaY), vh - 120);
   cat.style.left = `${newX}px`;
-  cat.style.top = `${newY}px`;
+  cat.style.top  = `${newY}px`;
   setTimeout(moveCat, 1000);
 }
+moveCat();
 
-// 点击烟花爆炸
 function spawnFireworkAt(x, y) {
   const img = document.createElement("img");
   img.src = "images/fireworks1.gif";
@@ -168,8 +165,10 @@ function spawnFireworkAt(x, y) {
   });
 });
 
-// 花瓣
 new Sakura('body', { fallSpeed: 1.2, delay: 300 });
 </script>
 </body>
 </html>
+"""
+
+index_html_fixed
