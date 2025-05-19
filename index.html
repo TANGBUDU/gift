@@ -153,13 +153,13 @@ function addMessage() {
   }
 }
 
-/* 🌸 花瓣飘落 */
+/* 🌸 Sakura 花瓣飘落 */
 new Sakura('body', {
   fallSpeed: 1.2,
   delay: 300
 });
 
-/* 🐱 橘猫：每秒固定移动 50px */
+/* 🐱 橘猫每秒移动 50px */
 function moveCat() {
   const cat = document.getElementById("cat");
   const vw = window.innerWidth;
@@ -181,18 +181,22 @@ function moveCat() {
 moveCat();
 setInterval(moveCat, 1000);
 
-/* 🎆 烟花动图 */
+/* 🎆 烟花动图放大 10 倍（1200px） */
 function spawnFirework() {
   const img = document.createElement("img");
   img.src = "images/fireworks1.gif";
   img.style.position = "fixed";
-  img.style.width = "120px";
+  img.style.width = "1200px"; // 🔥 放大 10 倍
   img.style.zIndex = 9998;
   img.style.pointerEvents = "none";
+
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  img.style.left = Math.random() * (vw - 120) + "px";
-  img.style.top = Math.random() * (vh - 120) + "px";
+  const maxX = Math.max(0, vw - 1200);
+  const maxY = Math.max(0, vh - 1200);
+  img.style.left = Math.random() * maxX + "px";
+  img.style.top = Math.random() * maxY + "px";
+
   document.body.appendChild(img);
   setTimeout(() => img.remove(), 1500);
 }
