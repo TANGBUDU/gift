@@ -67,10 +67,13 @@
     }
   </style>
 
-  <!-- 🌸 动态樱花飘落特效（无需上传图片） -->
+  <!-- 🌸 动态樱花飘落插件 -->
   <script src="https://fastly.jsdelivr.net/gh/tangbudu/sakura-canvas@main/sakura.js"></script>
 </head>
 <body>
+
+  <!-- 💮 樱花飘落画布 -->
+  <canvas id="sakura" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
 
   <h1>亲爱的，给你的小惊喜 ❤️</h1>
   <div class="days" id="daysTogether"></div>
@@ -100,7 +103,7 @@
   </div>
 
   <script>
-    // ❤️ 情话 + 天数（从 2025年4月20日开始）
+    // ❤️ 情话 + 天数（起始日：2025年4月20日）
     const quotes = [
       "你是我一生中最美的遇见。",
       "和你在一起的每一天都值得庆祝。",
@@ -128,7 +131,7 @@
 
     newQuote();
 
-    // 📷 轮播图
+    // 📷 图片轮播
     const images = [
       "images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg",
       "images/6.jpg", "images/7.jpg", "images/8.jpg", "images/9.jpg"
@@ -139,7 +142,7 @@
       document.getElementById("carouselImage").src = images[index];
     }, 3000);
 
-    // 🎵 自动播放优化（兼容移动端点击触发）
+    // 🎵 自动播放兼容处理（移动端需要点击）
     window.addEventListener('load', () => {
       const audio = document.getElementById("bgm");
       const tryPlay = () => {
@@ -149,7 +152,7 @@
       document.body.addEventListener('click', tryPlay);
     });
 
-    // 💬 留言墙逻辑
+    // 💬 留言功能
     function addMessage() {
       const input = document.getElementById("messageInput");
       const msg = input.value.trim();
