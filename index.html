@@ -1,5 +1,3 @@
-# 修复版 index.html，保持主界面原有美观样式、修正静音按钮逻辑、不显示留言内容
-index_html_fixed = """
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -57,6 +55,13 @@ index_html_fixed = """
       cursor: pointer;
       text-decoration: underline;
     }
+    input[type="text"] {
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      width: 60%;
+      font-size: 1em;
+    }
     #cat {
       position: fixed;
       width: 120px;
@@ -86,6 +91,8 @@ index_html_fixed = """
 
   <div class="message-wall">
     <h2 onclick="location.href='messages.html'">留言墙 💬</h2>
+    <input type="text" id="messageInput" placeholder="写一句想对我说的话吧…">
+    <button onclick="addMessage()">发送</button>
   </div>
 
   <img src="images/cat2.gif" id="cat">
@@ -128,6 +135,16 @@ muteBtn.onclick = () => {
   }
 };
 
+function addMessage() {
+  const input = document.getElementById("messageInput");
+  const msg = input.value.trim();
+  if (!msg) return;
+  let messages = JSON.parse(localStorage.getItem("messages") || "[]");
+  messages.push(msg);
+  localStorage.setItem("messages", JSON.stringify(messages));
+  input.value = "";
+}
+
 function moveCat() {
   const cat = document.getElementById("cat");
   const vw = window.innerWidth;
@@ -169,6 +186,3 @@ new Sakura('body', { fallSpeed: 1.2, delay: 300 });
 </script>
 </body>
 </html>
-"""
-
-index_html_fixed
