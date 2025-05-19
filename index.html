@@ -68,21 +68,6 @@
       pointer-events: none;
       transition: all 0.8s ease-in-out;
     }
-    .sign-button {
-      background: #fff0f5;
-      color: #cc6699;
-      font-size: 1.2em;
-      border: none;
-      padding: 12px 26px;
-      border-radius: 30px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .sign-button:hover {
-      background: #ffeaf3;
-      transform: scale(1.05);
-    }
   </style>
 </head>
 <body>
@@ -103,104 +88,159 @@
     <img id="carouselImage" src="images/1.jpg" alt="photo">
   </div>
 
+  <!-- 💬 留言墙（联网） -->
   <div class="message-wall">
     <h2 onclick="location.href='messages.html'">留言墙 💬</h2>
     <input type="text" id="messageInput" placeholder="写一句想对我说的话吧…">
     <button onclick="addMessage()">发送</button>
-  </div>
-
-  <div style="text-align:center; margin-top: 40px;">
-    <button class="sign-button" onclick="location.href='draw.html'">🔮 来一卦</button>
+    <div id="messageList"></div>
   </div>
 
   <img src="images/cat2.gif" id="cat">
 
-<script>
-const startDate = new Date("2025-04-20");
-const today = new Date();
-const days = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-document.getElementById("daysTogether").innerText = `我们在一起已经 ${days} 天啦！`;
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
-const quotes = [
-  "你是我一生中最美的遇见。",
-  "和你在一起的每一天都值得庆祝。",
-  "你的笑容是我每天的动力。",
-  "希望每天醒来都能看到你。",
-  "你出现之后，我的世界变得浪漫又柔软。"
-];
-function newQuote() {
-  const idx = Math.floor(Math.random() * quotes.length);
-  document.getElementById("quote").innerText = quotes[idx];
-}
-newQuote();
+  <script>
+    const startDate = new Date("2025-04-20");
+    const today = new Date();
+    const days = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+    document.getElementById("daysTogether").innerText = `我们在一起已经 ${days} 天啦！`;
 
-const imgs = ["images/1.jpg","images/2.jpg","images/3.jpg","images/4.jpg","images/5.jpg","images/6.jpg","images/7.jpg","images/8.jpg","images/9.jpg"];
-let i = 0;
-setInterval(() => {
-  i = (i + 1) % imgs.length;
-  document.getElementById("carouselImage").src = imgs[i];
-}, 3000);
+    const quotes = [
+      "你是我一生中最美的遇见。",
+      "和你在一起的每一天都值得庆祝。",
+      "你的笑容是我每天的动力。",
+      "希望每天醒来都能看到你。",
+      "你出现之后，我的世界变得浪漫又柔软。"
+    ];
+    function newQuote() {
+      const idx = Math.floor(Math.random() * quotes.length);
+      document.getElementById("quote").innerText = quotes[idx];
+    }
+    newQuote();
 
-const muteBtn = document.getElementById("muteBtn");
-const audio = document.getElementById("bgm");
-muteBtn.onclick = () => {
-  if (audio.paused) {
-    audio.play();
-    muteBtn.innerText = "🔈";
-  } else {
-    audio.pause();
-    muteBtn.innerText = "🔇";
-  }
-};
+    const imgs = ["images/1.jpg","images/2.jpg","images/3.jpg","images/4.jpg","images/5.jpg","images/6.jpg","images/7.jpg","images/8.jpg","images/9.jpg"];
+    let i = 0;
+    setInterval(() => {
+      i = (i + 1) % imgs.length;
+      document.getElementById("carouselImage").src = imgs[i];
+    }, 3000);
 
-function addMessage() {
-  const input = document.getElementById("messageInput");
-  const msg = input.value.trim();
-  if (!msg) return;
-  let messages = JSON.parse(localStorage.getItem("messages") || "[]");
-  messages.push(msg);
-  localStorage.setItem("messages", JSON.stringify(messages));
-  input.value = "";
-}
+    const muteBtn = document.getElementById("muteBtn");
+    const audio = document.getElementById("bgm");
+    muteBtn.onclick = () => {
+      if (audio.paused) {
+        audio.play();
+        muteBtn.innerText = "🔈";
+      } else {
+        audio.pause();
+        muteBtn.innerText = "🔇";
+      }
+    };
 
-function moveCat() {
-  const cat = document.getElementById("cat");
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const currentX = parseFloat(cat.style.left) || Math.random() * (vw - 120);
-  const currentY = parseFloat(cat.style.top)  || Math.random() * (vh - 120);
-  const step = 50;
-  const deltaX = (Math.random() > 0.5 ? 1 : -1) * step;
-  const deltaY = (Math.random() > 0.5 ? 1 : -1) * step;
-  const newX = Math.min(Math.max(0, currentX + deltaX), vw - 120);
-  const newY = Math.min(Math.max(0, currentY + deltaY), vh - 120);
-  cat.style.left = `${newX}px`;
-  cat.style.top  = `${newY}px`;
-  setTimeout(moveCat, 1000);
-}
-moveCat();
+    // 移动猫
+    function moveCat() {
+      const cat = document.getElementById("cat");
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const currentX = parseFloat(cat.style.left) || Math.random() * (vw - 120);
+      const currentY = parseFloat(cat.style.top)  || Math.random() * (vh - 120);
+      const step = 50;
+      const deltaX = (Math.random() > 0.5 ? 1 : -1) * step;
+      const deltaY = (Math.random() > 0.5 ? 1 : -1) * step;
+      const newX = Math.min(Math.max(0, currentX + deltaX), vw - 120);
+      const newY = Math.min(Math.max(0, currentY + deltaY), vh - 120);
+      cat.style.left = `${newX}px`;
+      cat.style.top  = `${newY}px`;
+      setTimeout(moveCat, 1000);
+    }
+    moveCat();
 
-function spawnFireworkAt(x, y) {
-  const img = document.createElement("img");
-  img.src = "images/fireworks1.gif";
-  img.style.position = "fixed";
-  img.style.width = "400px";
-  img.style.zIndex = 9998;
-  img.style.pointerEvents = "none";
-  img.style.left = `${x - 200}px`;
-  img.style.top  = `${y - 200}px`;
-  document.body.appendChild(img);
-  setTimeout(() => img.remove(), 1500);
-}
-["click", "touchstart"].forEach(eventType => {
-  document.addEventListener(eventType, e => {
-    const x = e.clientX || (e.touches && e.touches[0].clientX);
-    const y = e.clientY || (e.touches && e.touches[0].clientY);
-    if (x && y) spawnFireworkAt(x, y);
-  });
-});
+    // 点击烟花
+    function spawnFireworkAt(x, y) {
+      const img = document.createElement("img");
+      img.src = "images/fireworks1.gif";
+      img.style.position = "fixed";
+      img.style.width = "400px";
+      img.style.zIndex = 9998;
+      img.style.pointerEvents = "none";
+      img.style.left = `${x - 200}px`;
+      img.style.top  = `${y - 200}px`;
+      document.body.appendChild(img);
+      setTimeout(() => img.remove(), 1500);
+    }
+    ["click", "touchstart"].forEach(eventType => {
+      document.addEventListener(eventType, e => {
+        const x = e.clientX || (e.touches && e.touches[0].clientX);
+        const y = e.clientY || (e.touches && e.touches[0].clientY);
+        if (x && y) spawnFireworkAt(x, y);
+      });
+    });
 
-new Sakura('body', { fallSpeed: 1.2, delay: 300 });
-</script>
+    // 🌸 Sakura
+    new Sakura('body', { fallSpeed: 1.2, delay: 300 });
+
+    // ✅ Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyC5lRX6QhvZokG6Kh4VwnKEmZS9XsnwQhA",
+      authDomain: "sugar-gift.firebaseapp.com",
+      databaseURL: "https://sugar-gift-default-rtdb.firebaseio.com",
+      projectId: "sugar-gift",
+      storageBucket: "sugar-gift.appspot.com",
+      messagingSenderId: "950968381167",
+      appId: "1:950968381167:web:ffbea367dd9ac1a4f9751a"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const messagesRef = db.ref("messages");
+
+    function loadMessages() {
+      messagesRef.off();
+      messagesRef.on("value", (snapshot) => {
+        const list = document.getElementById("messageList");
+        list.innerHTML = "";
+        const data = snapshot.val();
+        if (data) {
+          Object.entries(data).forEach(([key, msg]) => {
+            const div = document.createElement("div");
+            div.textContent = msg.text;
+            div.style.padding = "8px";
+            div.style.margin = "5px auto";
+            div.style.maxWidth = "500px";
+            div.style.borderRadius = "10px";
+            div.style.background = "rgba(255,255,255,0.2)";
+            div.style.position = "relative";
+
+            const delBtn = document.createElement("button");
+            delBtn.innerText = "🗑️";
+            delBtn.style.position = "absolute";
+            delBtn.style.right = "8px";
+            delBtn.style.top = "5px";
+            delBtn.style.border = "none";
+            delBtn.style.background = "transparent";
+            delBtn.style.cursor = "pointer";
+            delBtn.onclick = () => messagesRef.child(key).remove();
+
+            div.appendChild(delBtn);
+            list.appendChild(div);
+          });
+        }
+      });
+    }
+
+    function addMessage() {
+      const input = document.getElementById("messageInput");
+      const text = input.value.trim();
+      if (text) {
+        messagesRef.push({ text });
+        input.value = "";
+      }
+    }
+
+    loadMessages();
+  </script>
 </body>
 </html>
