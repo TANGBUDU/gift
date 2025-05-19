@@ -1,34 +1,27 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>给我最爱的你 ❤️</title>
+  <title>白砂糖の家</title>
+  <link  href="https://cdn.jsdelivr.net/npm/sakura-js@1.1.1/dist/sakura.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sakura-js@1.1.1/dist/sakura.min.js"></script>
   <style>
     body {
       margin: 0;
-      background-image: url("images/back.png");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
+      background: url("images/back.png") center/cover fixed no-repeat;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
       padding: 30px;
       color: #fff;
-      text-shadow: 1px 1px 3px #00000088;
+      text-shadow: 1px 1px 3px #0008;
       overflow-x: hidden;
     }
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 20px;
-    }
-    .days, .quote {
-      font-size: 1.5em;
-      margin: 20px 0;
-    }
+    h1 { font-size: 2.5em; margin-bottom: 20px; }
+    .days, .quote { font-size: 1.5em; margin: 20px 0; }
     button {
-      background-color: #fff;
+      background: #fff;
       color: #ee9ca7;
       border: none;
       padding: 10px 20px;
@@ -36,27 +29,30 @@
       font-size: 1em;
       cursor: pointer;
       margin: 5px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 6px rgba(0,0,0,.2);
     }
     .carousel img {
       width: 80%;
       max-height: 300px;
       object-fit: contain;
       border-radius: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 8px rgba(0,0,0,.4);
     }
     .message-wall {
       margin-top: 30px;
     }
+    .message-wall h2 {
+      cursor: pointer;
+      text-decoration: underline;
+    }
     .message-list {
       margin-top: 10px;
       font-size: 1em;
-      background: rgba(255,255,255,0.2);
+      background: rgba(255,255,255,.2);
       padding: 10px;
       border-radius: 10px;
       max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-inline: auto;
     }
     input[type="text"] {
       padding: 8px;
@@ -65,103 +61,140 @@
       width: 60%;
       font-size: 1em;
     }
+    #cat {
+      position: fixed;
+      width: 120px;
+      z-index: 9999;
+      pointer-events: none;
+      transition: all 0.8s ease-in-out;
+    }
+    #mute-btn {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      border: none;
+      padding: 5px 10px;
+      border-radius: 10px;
+      z-index: 10000;
+      cursor: pointer;
+    }
   </style>
-
-  <!-- 🌸 动态樱花飘落特效（无需上传图片） -->
-  <script src="https://fastly.jsdelivr.net/gh/tangbudu/sakura-canvas@main/sakura.js"></script>
 </head>
 <body>
-
-  <h1>亲爱的，给你的小惊喜 ❤️</h1>
+  <button id="mute-btn">폴리오트 안되는 목소리</button>
+  <h1>角落の小社会。</h1>
   <div class="days" id="daysTogether"></div>
   <div class="quote" id="quote"></div>
-  <button onclick="newQuote()">换一句情话</button>
-  <button onclick="showBlessing()">点我领取祝福 💌</button>
+  <button onclick="newQuote()">换一句</button>
 
-  <!-- 🎵 自动播放音乐 -->
-  <audio id="bgm" autoplay loop>
-    <source src="music.mp3" type="audio/mpeg">
-    你的浏览器不支持音频播放。
-  </audio>
-
-  <!-- 📷 图片轮播 -->
+  <!-- 한번씩 바라는 이미지들 -->
   <div class="carousel">
-    <img id="carouselImage" src="images/1.jpg" alt="photo" />
+    <img id="carouselImage" src="images/1.jpg" alt="photo">
   </div>
 
-  <!-- 💬 留言墙 -->
+  <!-- 리버니브드 -->
   <div class="message-wall">
-    <h2>留言墙 💬</h2>
-    <input type="text" id="messageInput" placeholder="写一句想对我说的话吧…" />
+    <h2 onclick="window.location.href='messages.html'">留言墙 💬</h2>
+    <input type="text" id="messageInput" placeholder="写一句想对我说的话吧…">
     <button onclick="addMessage()">发送</button>
-    <div class="message-list" id="messageList">
-      （这里会显示你的留言）
-    </div>
+    <div class="message-list" id="messageList"></div>
   </div>
 
-  <script>
-    // ❤️ 情话 + 天数（从 2025年4月20日开始）
-    const quotes = [
-      "你是我一生中最美的遇见。",
-      "和你在一起的每一天都值得庆祝。",
-      "你的笑容是我每天的动力。",
-      "有你，星星都不敢太耀眼。",
-      "不管几岁，见到你我都像个孩子。",
-      "你的名字，是我见过最短的情诗。",
-      "希望每天醒来都能看到你。",
-      "你出现之后，我的世界变得浪漫又柔软。"
-    ];
+  <img src="images/cat2.gif" alt="橘猫" id="cat">
 
-    const startDate = new Date("2025-04-20");
-    const today = new Date();
-    const daysTogether = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-    document.getElementById('daysTogether').innerText = `我们在一起已经 ${daysTogether} 天啦！`;
+<script>
+const startDate = new Date("2025-04-20");
+const today = new Date();
+const days = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+document.getElementById("daysTogether").innerText = `我们在一起已经 ${days} 天啦！`;
 
-    function newQuote() {
-      const randomIndex = Math.floor(Math.random() * quotes.length);
-      document.getElementById('quote').innerText = quotes[randomIndex];
-    }
+const quotes = [
+  "你是我一生中最美的遇见。",
+  "和你在一起的每一天都值得庆祝。",
+  "你的笑容是我每天的动力。",
+  "希望每天醒来都能看到你。",
+  "你出现之后，我的世界变得浪漫又柔软。"
+];
+function newQuote() {
+  const idx = Math.floor(Math.random() * quotes.length);
+  document.getElementById("quote").innerText = quotes[idx];
+}
+newQuote();
 
-    function showBlessing() {
-      alert("愿你每天都开心，被我一直宠爱💝");
-    }
+const imgs = [
+  "images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg",
+  "images/6.jpg", "images/7.jpg", "images/8.jpg", "images/9.jpg"
+];
+let i = 0;
+setInterval(() => {
+  i = (i + 1) % imgs.length;
+  document.getElementById("carouselImage").src = imgs[i];
+}, 3000);
 
-    newQuote();
+// 녹음 가능
+const audio = new Audio("music.mp3");
+audio.loop = true;
+audio.autoplay = true;
+audio.play();
+document.getElementById("mute-btn").addEventListener("click", () => {
+  audio.paused ? audio.play() : audio.pause();
+});
 
-    // 📷 轮播图
-    const images = [
-      "images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg",
-      "images/6.jpg", "images/7.jpg", "images/8.jpg", "images/9.jpg"
-    ];
-    let index = 0;
-    setInterval(() => {
-      index = (index + 1) % images.length;
-      document.getElementById("carouselImage").src = images[index];
-    }, 3000);
+function addMessage() {
+  const input = document.getElementById("messageInput");
+  const msg = input.value.trim();
+  if (msg) {
+    const list = document.getElementById("messageList");
+    const div = document.createElement("div");
+    div.innerText = "❤️ " + msg;
+    list.appendChild(div);
+    // localStorage 저장
+    const messages = JSON.parse(localStorage.getItem("messages") || "[]");
+    messages.push(msg);
+    localStorage.setItem("messages", JSON.stringify(messages));
+    input.value = "";
+  }
+}
 
-    // 🎵 自动播放优化（兼容移动端点击触发）
-    window.addEventListener('load', () => {
-      const audio = document.getElementById("bgm");
-      const tryPlay = () => {
-        audio.play().catch(() => {});
-        document.body.removeEventListener('click', tryPlay);
-      };
-      document.body.addEventListener('click', tryPlay);
-    });
+new Sakura('body', { fallSpeed: 1.2, delay: 300 });
 
-    // 💬 留言墙逻辑
-    function addMessage() {
-      const input = document.getElementById("messageInput");
-      const msg = input.value.trim();
-      if (msg) {
-        const list = document.getElementById("messageList");
-        const entry = document.createElement("div");
-        entry.innerText = "❤️ " + msg;
-        list.appendChild(entry);
-        input.value = "";
-      }
-    }
-  </script>
+function moveCat() {
+  const cat = document.getElementById("cat");
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const currentX = parseFloat(cat.style.left) || Math.random() * (vw - 120);
+  const currentY = parseFloat(cat.style.top)  || Math.random() * (vh - 120);
+  const step = 50;
+  const deltaX = (Math.random() > 0.5 ? 1 : -1) * step;
+  const deltaY = (Math.random() > 0.5 ? 1 : -1) * step;
+  const newX = Math.min(Math.max(0, currentX + deltaX), vw - 120);
+  const newY = Math.min(Math.max(0, currentY + deltaY), vh - 120);
+  cat.style.left = `${newX}px`;
+  cat.style.top  = `${newY}px`;
+}
+moveCat();
+setInterval(moveCat, 1000);
 
+function spawnFireworkAt(x, y) {
+  const img = document.createElement("img");
+  img.src = "images/fireworks1.gif";
+  img.style.position = "fixed";
+  img.style.width = "400px";
+  img.style.zIndex = 9998;
+  img.style.pointerEvents = "none";
+  img.style.left = `${x - 200}px`;
+  img.style.top  = `${y - 200}px`;
+  document.body.appendChild(img);
+  setTimeout(() => img.remove(), 1500);
+}
+["click", "touchstart"].forEach(eventType => {
+  document.addEventListener(eventType, e => {
+    const x = e.clientX || (e.touches && e.touches[0].clientX);
+    const y = e.clientY || (e.touches && e.touches[0].clientY);
+    if (x && y) spawnFireworkAt(x, y);
+  });
+});
+</script>
 </body>
 </html>
