@@ -38,9 +38,6 @@
       margin: 5px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     }
-    .carousel {
-      margin-top: 30px;
-    }
     .carousel img {
       width: 80%;
       max-height: 300px;
@@ -48,24 +45,41 @@
       border-radius: 20px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.4);
     }
-    audio {
-      margin-top: 20px;
-    }
     .petal {
       position: fixed;
       top: -50px;
       z-index: 9999;
       pointer-events: none;
-      user-select: none;
-      width: 25px;
-      height: 25px;
-      background-image: url('https://cdn.jsdelivr.net/gh/hustcc/JS-Snowflake@master/assets/flower.png');
+      width: 20px;
+      height: 20px;
+      background-image: url('https://cdn.jsdelivr.net/gh/tangbudu/sakura@main/sakura.png');
       background-size: cover;
-      animation: fall 10s linear infinite;
+      animation: fall 8s linear infinite;
+      opacity: 0.8;
     }
     @keyframes fall {
       0% { transform: translateY(0) rotate(0deg); opacity: 1; }
       100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+    .message-wall {
+      margin-top: 30px;
+    }
+    .message-list {
+      margin-top: 10px;
+      font-size: 1em;
+      background: rgba(255,255,255,0.2);
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    input[type="text"] {
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      width: 60%;
+      font-size: 1em;
     }
   </style>
 </head>
@@ -88,6 +102,16 @@
     <img id="carouselImage" src="images/1.jpg" alt="photo" />
   </div>
 
+  <!-- 💬 留言墙 -->
+  <div class="message-wall">
+    <h2>留言墙 💬</h2>
+    <input type="text" id="messageInput" placeholder="写一句想对我说的话吧…" />
+    <button onclick="addMessage()">发送</button>
+    <div class="message-list" id="messageList">
+      （这里会显示你的留言）
+    </div>
+  </div>
+
   <script>
     // ❤️ 情话 + 天数
     const quotes = [
@@ -96,12 +120,12 @@
       "你的笑容是我每天的动力。",
       "有你，星星都不敢太耀眼。",
       "世界再大，我的眼里只有你。",
-      "我喜欢你，从眼睛到心里。",
       "不管几岁，见到你我都像个孩子。",
-      "你出现之后，我的世界变得浪漫又柔软。"
+      "你出现之后，我的世界变得浪漫又柔软。",
+      "希望每天醒来都能看到你。"
     ];
 
-    const startDate = new Date("2023-01-01"); // 改成你们的纪念日
+    const startDate = new Date("2023-01-01");
     const today = new Date();
     const daysTogether = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
     document.getElementById('daysTogether').innerText = `我们在一起已经 ${daysTogether} 天啦！`;
@@ -112,12 +136,12 @@
     }
 
     function showBlessing() {
-      alert("愿你每天都被温柔相待，被我放在心里💖");
+      alert("愿你天天开心，被我一直宠爱💝");
     }
 
     newQuote();
 
-    // 📷 轮播
+    // 📷 图片轮播
     const images = [
       "images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg",
       "images/6.jpg", "images/7.jpg", "images/8.jpg", "images/9.jpg"
@@ -135,21 +159,32 @@
       petal.style.left = Math.random() * 100 + 'vw';
       petal.style.animationDuration = (6 + Math.random() * 5) + 's';
       document.body.appendChild(petal);
-      setTimeout(() => {
-        petal.remove();
-      }, 10000);
+      setTimeout(() => petal.remove(), 10000);
     }
     setInterval(createPetal, 300);
 
-    // 🎵 自动播放兼容桌面浏览器
+    // 🎵 自动播放优化
     window.addEventListener('load', () => {
       const audio = document.getElementById("bgm");
-      const play = () => {
+      const tryPlay = () => {
         audio.play().catch(() => {});
-        document.body.removeEventListener('click', play);
+        document.body.removeEventListener('click', tryPlay);
       };
-      document.body.addEventListener('click', play); // 移动端点击触发播放
+      document.body.addEventListener('click', tryPlay);
     });
+
+    // 💬 留言墙逻辑
+    function addMessage() {
+      const input = document.getElementById("messageInput");
+      const msg = input.value.trim();
+      if (msg) {
+        const list = document.getElementById("messageList");
+        const entry = document.createElement("div");
+        entry.innerText = "❤️ " + msg;
+        list.appendChild(entry);
+        input.value = "";
+      }
+    }
   </script>
 
 </body>
