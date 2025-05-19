@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>给我最爱的你 ❤️</title>
 
-<!-- 🌸 Sakura.js（樱花） -->
+<!-- 🌸 Sakura.js -->
 <link  href="https://cdn.jsdelivr.net/npm/sakura-js@1.1.1/dist/sakura.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sakura-js@1.1.1/dist/sakura.min.js"></script>
 
-<!-- 🎆 Fireworks.js（随机烟花） -->
-<script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.10.8/dist/index.min.js"></script>
+<!-- 🎆 Fireworks.js UMD/CDN 版 -->
+<script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.10.8/dist/fireworks-cdn.min.js"></script>
 
 <style>
   body{
@@ -42,12 +42,13 @@
   input[type="text"]{
     padding:8px;border-radius:8px;border:none;width:60%;font-size:1em;
   }
-  /* 层级：樱花 100，烟花 101，橘猫 150，按钮等默认 */
+  /* 层级：樱花 100，烟花 101，橘猫 150 */
   .sakura{z-index:100;}
-  #fireworks-container{z-index:101;pointer-events:none;position:fixed;top:0;left:0;width:100%;height:100%;}
+  #fireworks-container{
+    position:fixed;inset:0;pointer-events:none;z-index:101;
+  }
   .pet-cat{
-    position:fixed;bottom:0;left:-150px;width:120px;pointer-events:none;
-    z-index:150;
+    position:fixed;bottom:0;left:-80px;width:120px;pointer-events:none;z-index:150;
   }
 </style>
 </head>
@@ -78,14 +79,14 @@
   <div class="message-list" id="messageList">（这里会显示你的留言）</div>
 </div>
 
-<!-- 🎆 随机烟花画布容器 -->
+<!-- 🎆 烟花画布 -->
 <div id="fireworks-container"></div>
 
 <script>
 /* ❤️ 天数 & 情话 */
 const startDate=new Date("2025-04-20");
-const days=Math.floor((Date.now()-startDate)/(1000*60*60*24));
-document.getElementById("daysTogether").innerText=`我们在一起已经 ${days} 天啦！`;
+const daysTogether=Math.floor((Date.now()-startDate)/(1000*60*60*24));
+document.getElementById("daysTogether").innerText=`我们在一起已经 ${daysTogether} 天啦！`;
 
 const quotes=[
  "你是我一生中最美的遇见。","和你在一起的每一天都值得庆祝。","你的笑容是我每天的动力。",
@@ -99,64 +100,66 @@ function showBlessing(){alert("愿你每天都开心，被我一直宠爱💝");
 newQuote();
 
 /* 📷 轮播 */
-const imgs=["images/1.jpg","images/2.jpg","images/3.jpg","images/4.jpg","images/5.jpg","images/6.jpg","images/7.jpg","images/8.jpg","images/9.jpg"];
+const pics=["images/1.jpg","images/2.jpg","images/3.jpg","images/4.jpg","images/5.jpg","images/6.jpg","images/7.jpg","images/8.jpg","images/9.jpg"];
 let idx=0;
-setInterval(()=>{idx=(idx+1)%imgs.length;document.getElementById("carouselImage").src=imgs[idx]},3000);
+setInterval(()=>{idx=(idx+1)%pics.length;document.getElementById("carouselImage").src=pics[idx]},3000);
 
-/* 🎵 自动播放（移动端需要首次点击触发） */
+/* 🎵 自动播放兼容 */
 window.addEventListener("load",()=>{
   const audio=document.getElementById("bgm");
-  const attempt=()=>{audio.play().catch(()=>{});document.body.removeEventListener("click",attempt);};
-  document.body.addEventListener("click",attempt);
+  const resume=()=>{audio.play().catch(()=>{});document.body.removeEventListener("click",resume);};
+  document.body.addEventListener("click",resume);
 });
 
-/* 💬 留言 */
+/* 💬 留言墙 */
 function addMessage(){
   const input=document.getElementById("messageInput");
   const msg=input.value.trim();
   if(msg){
-    const list=document.getElementById("messageList");
     const div=document.createElement("div");
     div.innerText="❤️ "+msg;
-    list.appendChild(div);
+    document.getElementById("messageList").appendChild(div);
     input.value="";
   }
 }
 
-/* 🌸 Sakura.js */
+/* 🌸 樱花 */
 new Sakura('body',{fallSpeed:1.2,delay:300});
 
-/* 🎆 Fireworks.js */
-const fireworks=new Fireworks.default(document.getElementById("fireworks-container"),{
-  hue:{min:0,max:360},
-  delay:{min:15,max:60},
-  traceSpeed:10,
+/* 🎆 随机烟花 */
+const fireworks=new Fireworks(document.getElementById("fireworks-container"),{
   rocketsPoint:50,
+  hue:{min:0,max:360},
+  delay:{min:15,max:45},
+  traceSpeed:10,
+  speed:2,
+  acceleration:1.05,
+  friction:0.95,
+  gravity:1.5,
   brightness:{min:60,max:90},
   decay:{min:0.015,max:0.03},
-  acceleration:1.05
+  autoresize:true
 });
 fireworks.start();
 
 /* 🐱 橘猫宠物 */
 const cat=document.createElement("img");
-cat.src="https://media.giphy.com/media/13CoXDiaCcCoyk/giphy.gif"; // 橘猫走路 GIF
+cat.src="https://media.giphy.com/media/13CoXDiaCcCoyk/giphy.gif"; // 可替换
 cat.className="pet-cat";
 document.body.appendChild(cat);
 
-let dir=1; // 1→右，-1→左
-let pos=-150;
-function moveCat(){
-  pos+=dir*2; // 速度
+let dir=1,pos=-80;   // 初始更靠内，2 秒左右出现
+function walk(){
+  pos+=dir*3;        // 速度 3 像素/帧
   if(dir===1 && pos>innerWidth){
     dir=-1;cat.style.transform="scaleX(-1)";
-  }else if(dir===-1 && pos<-150){
+  }else if(dir===-1 && pos<-80){
     dir=1;cat.style.transform="scaleX(1)";
   }
   cat.style.left=pos+"px";
-  requestAnimationFrame(moveCat);
+  requestAnimationFrame(walk);
 }
-moveCat();
+walk();
 </script>
 </body>
 </html>
