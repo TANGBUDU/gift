@@ -1,73 +1,82 @@
-<!-- messages.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>白砂糖の家 - 留言纪录</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>留言板记录 - 白砂糖の家</title>
+
+  <!-- Sakura 花瓣特效 -->
   <link href="https://cdn.jsdelivr.net/npm/sakura-js@1.1.1/dist/sakura.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sakura-js@1.1.1/dist/sakura.min.js"></script>
+
   <style>
     body {
       margin: 0;
-      background: url("images/back.png") center/cover fixed no-repeat;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-align: center;
+      background: url('images/back.png') center/cover fixed no-repeat;
+      font-family: 'Segoe UI', sans-serif;
       padding: 30px;
-      color: #fff;
-      text-shadow: 1px 1px 3px #0008;
-      overflow-x: hidden;
+      color: white;
+      text-align: center;
+      text-shadow: 1px 1px 3px #000;
     }
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 20px;
-    }
-    .message-list {
-      font-size: 1.2em;
+    .message {
       background: rgba(255,255,255,0.2);
-      padding: 20px;
       border-radius: 10px;
-      max-width: 600px;
-      margin: 0 auto;
+      margin: 10px auto;
+      padding: 10px 15px;
+      max-width: 500px;
+      position: relative;
     }
-    .message-item {
-      margin: 10px 0;
-      border-bottom: 1px dashed #fff;
-      padding-bottom: 5px;
+    .delete {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background: rgba(255,0,0,0.6);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 3px 8px;
+      font-size: 0.9em;
     }
     a {
       color: #fff;
       text-decoration: underline;
-      display: inline-block;
-      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>留言纪录 📄</h1>
-  <div class="message-list" id="allMessages">
-    正在加载留言...
-  </div>
-  <a href="index.html">◀ 返回首页</a>
+  <h1>留言板记录</h1>
+  <div id="messageList"></div>
+  <p><a href="index.html">← 返回主页</a></p>
 
-<script>
-  function loadMessages() {
-    const box = document.getElementById("allMessages");
-    const messages = JSON.parse(localStorage.getItem("messages") || "[]");
-    box.innerHTML = "";
-    if (messages.length === 0) {
-      box.innerHTML = "<p>暂无留言</p>";
-    } else {
-      messages.forEach(msg => {
+  <script>
+    const list = document.getElementById("messageList");
+    let messages = JSON.parse(localStorage.getItem("messages") || "[]");
+
+    function renderMessages() {
+      list.innerHTML = "";
+      messages.forEach((msg, idx) => {
         const div = document.createElement("div");
-        div.className = "message-item";
-        div.textContent = "❤️ " + msg;
-        box.appendChild(div);
+        div.className = "message";
+        div.innerText = msg;
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "delete";
+        delBtn.innerText = "删除";
+        delBtn.onclick = () => {
+          messages.splice(idx, 1);
+          localStorage.setItem("messages", JSON.stringify(messages));
+          renderMessages();
+        };
+
+        div.appendChild(delBtn);
+        list.appendChild(div);
       });
     }
-  }
-  loadMessages();
-  new Sakura('body', { fallSpeed: 1.2, delay: 300 });
-</script>
+
+    renderMessages();
+    new Sakura('body', { fallSpeed: 1.2, delay: 300 });
+  </script>
 </body>
 </html>
