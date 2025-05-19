@@ -159,26 +159,34 @@ new Sakura('body', {
   delay: 300
 });
 
-/* 🐱 橘猫每秒随机移动 */
+<script>
 function moveCat() {
   const cat = document.getElementById("cat");
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
-  // ✨ 这里是可调范围（例：限制猫猫只在页面右下角活动）
-  const minX = vw * 0.5;
-  const maxX = vw * 0.85;
-  const minY = vh * 0.5;
-  const maxY = vh * 0.85;
+  // 当前坐标（第一次默认为随机位置）
+  const currentX = parseFloat(cat.style.left) || Math.random() * (vw - 120);
+  const currentY = parseFloat(cat.style.top)  || Math.random() * (vh - 120);
 
-  const randX = Math.random() * (maxX - minX) + minX;
-  const randY = Math.random() * (maxY - minY) + minY;
+  // 每次移动的固定距离（可调）
+  const step = 100;
 
-  cat.style.left = `${randX}px`;
-  cat.style.top  = `${randY}px`;
+  // 方向：+step 或 -step
+  const deltaX = (Math.random() > 0.5 ? 1 : -1) * step;
+  const deltaY = (Math.random() > 0.5 ? 1 : -1) * step;
+
+  // 新坐标，限制不出屏幕
+  const newX = Math.min(Math.max(0, currentX + deltaX), vw - 120);
+  const newY = Math.min(Math.max(0, currentY + deltaY), vh - 120);
+
+  cat.style.left = `${newX}px`;
+  cat.style.top  = `${newY}px`;
 }
 moveCat();
-setInterval(moveCat, 1000);  // 每秒移动一次
+setInterval(moveCat, 1000);
+</script>
+
 
 
 /* 🎆 烟花动图：每2秒随机生成一个并自动消失 */
