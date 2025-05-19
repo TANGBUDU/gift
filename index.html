@@ -4,200 +4,122 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>给我最爱的你 ❤️</title>
+
+  <!-- 🌸 Sakura.js → 带内嵌花瓣贴图，无需本地素材 -->
+  <link  href="https://cdn.jsdelivr.net/npm/sakura-js@1.1.1/dist/sakura.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sakura-js@1.1.1/dist/sakura.min.js"></script>
+
   <style>
-    body {
-      margin: 0;
-      background-image: url("images/back.png");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-align: center;
-      padding: 30px;
-      color: #fff;
-      text-shadow: 1px 1px 3px #00000088;
-      overflow-x: hidden;
+    /* —— 你原来的样式 —— */
+    body{
+      margin:0;
+      background:url("images/back.png") center/cover fixed no-repeat;
+      font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+      text-align:center;
+      padding:30px;
+      color:#fff;
+      text-shadow:1px 1px 3px #0008;
+      overflow-x:hidden;
     }
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 20px;
+    h1{font-size:2.5em;margin-bottom:20px}
+    .days,.quote{font-size:1.5em;margin:20px 0}
+    button{
+      background:#fff;color:#ee9ca7;border:none;padding:10px 20px;
+      border-radius:30px;font-size:1em;cursor:pointer;margin:5px;
+      box-shadow:0 4px 6px rgba(0,0,0,.2);
     }
-    .days, .quote {
-      font-size: 1.5em;
-      margin: 20px 0;
+    .carousel img{
+      width:80%;max-height:300px;object-fit:contain;border-radius:20px;
+      box-shadow:0 4px 8px rgba(0,0,0,.4);
     }
-    button {
-      background-color: #fff;
-      color: #ee9ca7;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 30px;
-      font-size: 1em;
-      cursor: pointer;
-      margin: 5px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    .message-wall{margin-top:30px}
+    .message-list{
+      margin-top:10px;font-size:1em;background:rgba(255,255,255,.2);
+      padding:10px;border-radius:10px;max-width:500px;margin-inline:auto;
     }
-    .carousel img {
-      width: 80%;
-      max-height: 300px;
-      object-fit: contain;
-      border-radius: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    input[type="text"]{
+      padding:8px;border-radius:8px;border:none;width:60%;font-size:1em;
     }
-    .message-wall {
-      margin-top: 30px;
-    }
-    .message-list {
-      margin-top: 10px;
-      font-size: 1em;
-      background: rgba(255,255,255,0.2);
-      padding: 10px;
-      border-radius: 10px;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    input[type="text"] {
-      padding: 8px;
-      border-radius: 8px;
-      border: none;
-      width: 60%;
-      font-size: 1em;
-    }
-
-    /* 🌸 樱花样式 */
-    .sakura {
-      position: fixed;
-      top: -50px;
-      z-index: 9999;
-      user-select: none;
-      pointer-events: none;
-      width: 15px;
-      height: 15px;
-      background-image: url('https://cdn.jsdelivr.net/gh/an-root/static@main/img/sakura.png');
-      background-size: cover;
-      animation-name: fall;
-      animation-timing-function: linear;
-    }
-
-    @keyframes fall {
-      0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
-      }
-    }
+    /* 让花瓣层级介于背景与按钮之间 */
+    .sakura{z-index:100;}
   </style>
 </head>
 <body>
 
   <h1>亲爱的，给你的小惊喜 ❤️</h1>
-  <div class="days" id="daysTogether"></div>
+  <div class="days"  id="daysTogether"></div>
   <div class="quote" id="quote"></div>
   <button onclick="newQuote()">换一句情话</button>
   <button onclick="showBlessing()">点我领取祝福 💌</button>
 
-  <!-- 🎵 自动播放音乐 -->
+  <!-- 🎵 背景音乐 -->
   <audio id="bgm" autoplay loop>
     <source src="music.mp3" type="audio/mpeg">
     你的浏览器不支持音频播放。
   </audio>
 
-  <!-- 📷 图片轮播 -->
+  <!-- 📷 轮播图 -->
   <div class="carousel">
-    <img id="carouselImage" src="images/1.jpg" alt="photo" />
+    <img id="carouselImage" src="images/1.jpg" alt="photo">
   </div>
 
   <!-- 💬 留言墙 -->
   <div class="message-wall">
     <h2>留言墙 💬</h2>
-    <input type="text" id="messageInput" placeholder="写一句想对我说的话吧…" />
+    <input type="text" id="messageInput" placeholder="写一句想对我说的话吧…">
     <button onclick="addMessage()">发送</button>
-    <div class="message-list" id="messageList">
-      （这里会显示你的留言）
-    </div>
+    <div class="message-list" id="messageList">（这里会显示你的留言）</div>
   </div>
 
-  <script>
-    // ❤️ 情话 + 天数（起始日：2025年4月20日）
-    const quotes = [
-      "你是我一生中最美的遇见。",
-      "和你在一起的每一天都值得庆祝。",
-      "你的笑容是我每天的动力。",
-      "有你，星星都不敢太耀眼。",
-      "不管几岁，见到你我都像个孩子。",
-      "你的名字，是我见过最短的情诗。",
-      "希望每天醒来都能看到你。",
-      "你出现之后，我的世界变得浪漫又柔软。"
-    ];
+<script>
+/* ❤️ 天数 & 情话 */
+const startDate=new Date("2025-04-20");
+const today=new Date();
+const days=Math.floor((today-startDate)/(1000*60*60*24));
+document.getElementById("daysTogether").innerText=`我们在一起已经 ${days} 天啦！`;
 
-    const startDate = new Date("2025-04-20");
-    const today = new Date();
-    const daysTogether = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-    document.getElementById('daysTogether').innerText = `我们在一起已经 ${daysTogether} 天啦！`;
+const quotes=[
+ "你是我一生中最美的遇见。","和你在一起的每一天都值得庆祝。","你的笑容是我每天的动力。",
+ "有你，星星都不敢太耀眼。","不管几岁，见到你我都像个孩子。","你的名字，是我见过最短的情诗。",
+ "希望每天醒来都能看到你。","你出现之后，我的世界变得浪漫又柔软。"
+];
+function newQuote(){
+  const idx=Math.floor(Math.random()*quotes.length);
+  document.getElementById("quote").innerText=quotes[idx];
+}
+function showBlessing(){alert("愿你每天都开心，被我一直宠爱💝");}
+newQuote();
 
-    function newQuote() {
-      const randomIndex = Math.floor(Math.random() * quotes.length);
-      document.getElementById('quote').innerText = quotes[randomIndex];
-    }
+/* 📷 轮播 */
+const imgs=["images/1.jpg","images/2.jpg","images/3.jpg","images/4.jpg","images/5.jpg","images/6.jpg","images/7.jpg","images/8.jpg","images/9.jpg"];
+let i=0;
+setInterval(()=>{i=(i+1)%imgs.length;document.getElementById("carouselImage").src=imgs[i]},3000);
 
-    function showBlessing() {
-      alert("愿你每天都开心，被我一直宠爱💝");
-    }
+/* 🎵 自动播放（iOS/微信需要用户点击一次） */
+window.addEventListener("load",()=>{
+  const audio=document.getElementById("bgm");
+  const auto=()=>{audio.play().catch(()=>{});document.body.removeEventListener("click",auto);};
+  document.body.addEventListener("click",auto);
+});
 
-    newQuote();
+/* 💬 留言 */
+function addMessage(){
+  const input=document.getElementById("messageInput");
+  const msg=input.value.trim();
+  if(msg){
+    const list=document.getElementById("messageList");
+    const div=document.createElement("div");
+    div.innerText="❤️ "+msg;
+    list.appendChild(div);
+    input.value="";
+  }
+}
 
-    // 📷 图片轮播
-    const images = [
-      "images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg",
-      "images/6.jpg", "images/7.jpg", "images/8.jpg", "images/9.jpg"
-    ];
-    let index = 0;
-    setInterval(() => {
-      index = (index + 1) % images.length;
-      document.getElementById("carouselImage").src = images[index];
-    }, 3000);
-
-    // 🎵 自动播放兼容处理
-    window.addEventListener('load', () => {
-      const audio = document.getElementById("bgm");
-      const tryPlay = () => {
-        audio.play().catch(() => {});
-        document.body.removeEventListener('click', tryPlay);
-      };
-      document.body.addEventListener('click', tryPlay);
-    });
-
-    // 💬 留言功能
-    function addMessage() {
-      const input = document.getElementById("messageInput");
-      const msg = input.value.trim();
-      if (msg) {
-        const list = document.getElementById("messageList");
-        const entry = document.createElement("div");
-        entry.innerText = "❤️ " + msg;
-        list.appendChild(entry);
-        input.value = "";
-      }
-    }
-
-    // 🌸 樱花飘落 DOM 实现
-    function createSakura() {
-      const sakura = document.createElement("div");
-      sakura.classList.add("sakura");
-      sakura.style.left = Math.random() * 100 + "vw";
-      sakura.style.animationDuration = 6 + Math.random() * 5 + "s";
-      sakura.style.opacity = Math.random();
-      sakura.style.fontSize = Math.random() * 10 + 10 + "px";
-      document.body.appendChild(sakura);
-      setTimeout(() => sakura.remove(), 10000);
-    }
-    setInterval(createSakura, 300);
-  </script>
-
+/* 🌸 开启 Sakura.js */
+new Sakura('body',{   // 可按需调速
+  fallSpeed:1.2,      // >1 慢些, <1 快些
+  delay:300           // 新花瓣间隔 (ms)
+});
+</script>
 </body>
 </html>
